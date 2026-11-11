@@ -19,7 +19,7 @@
 | Secret | `DEV_REGISTRY_PASSWORD` | 해당 계정의 비밀번호 |
 | Secret | `DEV_DEPLOY_TOKEN` | team1 배포 토큰 |
 
-2026-11-11 기준 포크의 Variable 3개와 `dev` 브랜치 제한은 설정했다. Secret 3개는 등록되지 않아 실제 배포는 아직 실행할 수 없다. 값은 채팅, 코드, 문서, 커밋에 적지 말고 GitHub Secrets 입력란에만 등록한다. 기존 AWS 키는 ECR용이므로 이 세 Secret을 대신하지 않는다.
+2026-11-11 기준 포크의 Variable 3개, Secret 3개, `dev` 브랜치 제한을 설정했다. 실제 값은 이 문서나 커밋에 넣지 않았다. 기존 AWS 키는 ECR용이므로 이 세 Secret을 대신하지 않는다.
 
 ## 실행 및 확인
 
@@ -32,3 +32,10 @@
 값 검사에서 실패하면 이미지 게시 전 멈춘다. `401`은 배포 토큰, 레지스트리 로그인 실패는 레지스트리 계정·비밀번호, `database != up`은 팀 DB 설정을 확인한다. DB와 VM은 8팀 공유 자원이므로 볼륨 삭제나 서버 전체 재설치는 하지 않는다.
 
 수업 자료의 절차와 인프라 설명은 원본 저장소의 [`docs/DEV_REGISTRY.md`](https://github.com/MinQDU014/idea-support-server/blob/dev/docs/DEV_REGISTRY.md) 및 [`deploy/classroom-cd/README.md`](https://github.com/MinQDU014/idea-support-server/blob/dev/deploy/classroom-cd/README.md)를 참고한다.
+
+## 2026-11-11 실습 결과
+
+- [team1 변경 PR #1](https://github.com/konga22/idea-support-server/pull/1)의 `Dev Lint and Test`가 성공했고 `publish`는 예상대로 건너뛰었다.
+- PR을 이 포크의 `dev`에 합친 커밋은 `b2856f8f15822f051df3145a523fa81313f0b587`이다.
+- [dev push 실행 42954365300](https://github.com/konga22/idea-support-server/actions/runs/42954365300)에서 테스트, 대상 값 검사, team1 이미지 게시, 앱 교체, 외부 헬스체크가 모두 성공했다. 이미지 이름은 `docker.minq.live/team1/idea-support-server`이며 버전 태그는 `dev-b2856f8f15822f051df3145a523fa81313f0b587`와 `latest`다.
+- 2026-11-11 12:46 KST에 외부에서 `GET https://daelim.minq.live/team1/common/health`를 다시 호출했다. HTTP 200, `{"status":"ok","database":"up","aiMode":"mock","seedReady":true}`를 받았다. 이는 서버와 DB 준비 상태를 확인한 결과다. Gemini 실제 생성 요청은 이번 실습에서 시험하지 않았다.
